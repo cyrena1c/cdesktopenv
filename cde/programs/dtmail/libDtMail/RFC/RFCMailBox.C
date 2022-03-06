@@ -3775,6 +3775,8 @@ RFCMailBox::linkLockFile(DtMailEnv & error, char *tempLockFileName)
   int return_status;
   struct stat sbuf;
 
+  printf("%s\n", tempLockFileName);
+
   // Create the temporary lock file. Failure to do so indicates lack of write permission
   // in the directory or some other fatal error
   //
@@ -3910,7 +3912,7 @@ RFCMailBox::lockFile(DtMailEnv & error)
   // We will create a simple lock file to keep the file from
   // changing while we are doing critical work.
   //
-  
+
   // On some platforms, sendmail will place a lockf lock on the
   // file during mail delivery. If this is the case, then we
   // need to make sure we have the lock here.
@@ -3930,6 +3932,54 @@ RFCMailBox::lockFile(DtMailEnv & error)
       DEBUG_PRINTF( ("%s:  not using dot lock\n", pname) );
       return;
   }
+
+#ifdef LOCKSPOOL
+  assert(_dot_lock_active == DTM_FALSE);
+  DEBUG_PRINTF( ("%s:  using lockspool\n", pname) );
+
+  int fd_from_lockspool[2];
+  pipe(_fd_to_lockspool);
+  pipe(fd_from_lockspool);
+
+  pid_t pid = fork();
+  if (pid == -1) {
+    error.vSetError(DTME_CannotCreateMailboxLockFile,
+                    DTM_FALSE,
+                    NULL,
+                    "fork()",
+                    error.errnoMessage());
+    return;
+  } else if (pid == 0) {
+    close(_fd_to_lockspool[1]);
+    close(fd_from_lockspool[0]);
+    dup2(_fd_to_lockspool[0], STDIN_FILENO);
+    dup2(fd_from_lockspool[1], STDOUT_FILENO);
+    if (execlp(LOCKSPOOL, "lockspool", (char*)NULL) < 0) {
+      dprintf(fd_from_lockspool[1], "0");
+      close(fd_from_lockspool[1]);
+      close(_fd_to_lockspool[0]);
+      exit(0);
+    }
+  }
+
+  close(_fd_to_lockspool[0]);
+  close(fd_from_lockspool[1]);
+
+  char lockspool_output;
+  read(fd_from_lockspool[0], &lockspool_output, 1);
+  close(fd_from_lockspool[0]);
+  if (lockspool_output == '1') {
+    _dot_lock_active = DTM_TRUE;
+  } else {
+    error.vSetError(DTME_CannotCreateMailboxLockFile,
+                    DTM_FALSE,
+                    NULL,
+                    "lockspool",
+                    error.errnoMessage());
+    close(_fd_to_lockspool[1]);
+  }
+  return;
+#endif
 
   // Implement the .lock short term lock protocol
   // This code was "adapted" from Solaris 2.5 (SunOS 5.5)
@@ -4095,9 +4145,12 @@ RFCMailBox::unlockFile(DtMailEnv & error, int fd)
   // We will create a simple lock file to keep the file from
   // changing while we are doing critical work.
   //
-  
+
   if (_use_dot_lock == DTM_TRUE) {
     assert(_dot_lock_active == DTM_TRUE);
+#if defined(LOCKSPOOL)
+    close(_fd_to_lockspool[1]);
+#else
     assert(_lockFileName != NULL);
     _dot_lock_active = DTM_FALSE;
     checkLockFileOwnership(error);
@@ -4110,6 +4163,7 @@ RFCMailBox::unlockFile(DtMailEnv & error, int fd)
 		     DTM_FALSE, NULL, _lockFileName, error.errnoMessage());
         }
     }
+#endif
   }
   
 #if defined(SENDMAIL_LOCKS)

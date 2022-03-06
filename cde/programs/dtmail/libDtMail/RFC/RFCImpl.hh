@@ -67,6 +67,12 @@ extern "C" {
 }
 #endif
 
+// In some platforms we need to use external executable
+// to lock the spool
+#if defined(__OpenBSD__)
+  #include <unistd.h>
+  #define LOCKSPOOL "/usr/libexec/lockspool"
+#endif
 
 // Structs needed to exec sendmail
 typedef struct waitentry {
@@ -741,6 +747,9 @@ class RFCMailBox : public DtMail::MailBox
     char *			 _uniqueLockId;	// unique id for .lock files
     int				 _uniqueLockIdLength;
     DtMailBoolean		 _use_dot_lock;
+#ifdef LOCKSPOOL
+    int _fd_to_lockspool[2];
+#endif
 
 //  void	CheckPointEvent(DtMailEnv & error);
     void	CheckPointEvent();

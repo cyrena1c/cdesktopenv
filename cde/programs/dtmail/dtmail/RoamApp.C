@@ -1310,9 +1310,11 @@ void RoamApp::initialize(int *argcp, char **argv)
     //
     const char *value = NULL;
     mail_error.clear();
+#ifndef __OpenBSD__
     d_session->mailRc(mail_error)->getValue(mail_error, 
 					    "__ignore_group_permissions", 
 					    &value);
+#endif
     if (mail_error.isSet()) {
         char grp_name[100];
 
