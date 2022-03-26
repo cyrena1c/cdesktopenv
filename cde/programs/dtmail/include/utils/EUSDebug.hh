@@ -47,7 +47,10 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-extern int EUSDebugLevel;
+/* EUSDebugLevel:
+ * commented out due to lack of definition anywhere */
+
+// extern int EUSDebugLevel;
 
 inline void
 initDebug(void)
@@ -55,10 +58,10 @@ initDebug(void)
     char * level = getenv("EUS_DEBUG");
 
     if (level) {
-	EUSDebugLevel = atoi(level);
+	// EUSDebugLevel = atoi(level);
     }
     else {
-	EUSDebugLevel = 0;
+        // EUSDebugLevel = 0;
     }
 }
 
@@ -67,7 +70,8 @@ DebugPrintf(int level, const char * fmt, ...)
 {
     va_list	args;
     
-    if (level <= EUSDebugLevel) {
+    // if (level <= EUSDebugLevel) {
+    if (1) {
 	va_start(args, fmt);
 	fprintf(stderr, "EUS DEBUG: ");
 	vfprintf(stderr, fmt, args);

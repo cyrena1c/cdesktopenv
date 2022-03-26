@@ -4150,6 +4150,7 @@ RFCMailBox::unlockFile(DtMailEnv & error, int fd)
     assert(_dot_lock_active == DTM_TRUE);
 #if defined(LOCKSPOOL)
     close(_fd_to_lockspool[1]);
+    _dot_lock_active = DTM_FALSE;
 #else
     assert(_lockFileName != NULL);
     _dot_lock_active = DTM_FALSE;

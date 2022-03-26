@@ -47,13 +47,22 @@ bool_t xdr_time_t(XDR *xdrs, time_t *objp);
 /*
  * time_t is a typedef which is system dependent
  */
+
+#ifdef __OpenBSD__
+/* It looks like, at least in OpenBSD, xdr_hyper has been
+ * replaced by  xdr_int64_t  or something like that.  Not
+ * sure about the other systems.  */
+#define _xdr_long_long_t xdr_int64_t
+#else
+#define _xdr_long_long_t xdr_hyper
+#end
 #ifndef _xdr_time_t
 # if SIZEOF_INT == SIZEOF_TIME_T
 # define _xdr_time_t xdr_int
 # elif SIZEOF_LONG == SIZEOF_TIME_T
 # define _xdr_time_t xdr_long
 # elif SIZEOF_LONG_LONG == SIZEOF_TIME_T
-# define _xdr_time_t xdr_hyper
+# define _xdr_time_t _xdr_long_long_t
 # else
 # error "Unknown time_t size"
 # endif
