@@ -35,12 +35,6 @@ if LINUX
 dtksh_LDADD += -ldl
 endif
 
-if OPENBSD
-if PPC
-dtksh_LDADD += -lm
-endif
-endif
-
 if SOLARIS
 dtksh_LDADD += -lsecdb -lsocket -lnsl
 endif
@@ -62,7 +56,8 @@ dtksh_SOURCES = init.c \
                 msgs.c
 
 init.c:
-	cd ksh93; ./bin/package flat make CCFLAGS='$(SUIDEXECDEFINES) -g -D_std_malloc'
+	cd ksh93; ./bin/package flat make \
+	CCFLAGS='$(SUIDEXECDEFINES) -g -D_std_malloc' LDFLAGS='-lm'
 	cp ./ksh93/src/cmd/ksh93/sh/init.c init.c
 	$(PATCH) --posix init.c -i init.patch
 	./setup.sh

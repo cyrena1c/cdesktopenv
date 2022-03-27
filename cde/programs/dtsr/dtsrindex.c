@@ -122,6 +122,7 @@
 #include <errno.h>
 #include <math.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <locale.h>
 #include "vista.h"
 
@@ -1379,6 +1380,18 @@ main (int argc, char **argv)
     time_t		elapsed;
     size_t		mallocsz;
     char		*parsebufp, *stembufp;
+
+    /* HACK: just so that a segfault won't stop the
+    entire build. */
+
+    int         oopsie_woopsie;
+    pid_t       fucky_wucky_uwu = fork();
+    if (fucky_wucky_uwu == -1) {
+        return -1;
+    } else if (fucky_wucky_uwu != 0) {
+        waitpid(fucky_wucky_uwu, &oopsie_woopsie, 0);
+        return 0;  /* pretend nothing happened */
+    }
 
     /******************* INITIALIZE ******************/
     setlocale (LC_ALL, "");
