@@ -15,6 +15,12 @@ libDtHelp_la_CFLAGS = -I./il -I./jpeg -I../DtSvc/DtUtil2 -DDTLIB \
 
 libDtHelp_la_LIBADD = $(JPEGLIB) il/libil.la $(LTLIBICONV)
 
+if OPENBSD
+if PPC
+libDtHelp_la_LIBADD += -lm
+endif
+endif
+
 if SOLARIS
 libDtHelp_la_LIBADD += -lw -lgen -lm -lc
 endif

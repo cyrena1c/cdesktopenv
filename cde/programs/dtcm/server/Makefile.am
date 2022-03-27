@@ -6,6 +6,12 @@ rpc_cmsd_CFLAGS = -I../../../lib/csa $(DT_INCDIR) $(CSA_INCDIR)
 
 rpc_cmsd_LDADD = $(LIBCSA) $(DTCLIENTLIBS) $(TIRPCLIB) $(XTOOLLIB)
 
+if OPENBSD
+if PPC
+rpc_cmsd_LDADD += -lm
+endif
+endif
+
 if SOLARIS
 rpc_cmsd_LDADD += -lsocket -lnsl -lintl -lm -ldl
 endif

@@ -9,6 +9,12 @@ dthelpprint_CPPFLAGS = -I.. -I ../../../lib/DtHelp \
 
 dthelpprint_LDADD = $(DTCLIENTLIBS) $(XTOOLLIB)
 
+if OPENBSD
+if PPC
+dthelpprint_LDADD += -lm
+endif
+endif
+
 if SOLARIS
 dthelpprint_LDADD += -lw -ldl -lgen -lm
 endif

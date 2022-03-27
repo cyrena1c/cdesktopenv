@@ -21,6 +21,12 @@ endif
 
 libDtSearch_la_LIBADD = raima/libraima.la
 
+if OPENBSD
+if PPC
+libDtSearch_la_LIBADD += -llm
+endif
+endif
+
 if SOLARIS
 libDtSearch_la_LIBADD += -lm -lc
 endif

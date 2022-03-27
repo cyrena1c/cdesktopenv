@@ -35,6 +35,12 @@ if LINUX
 dtksh_LDADD += -ldl
 endif
 
+if OPENBSD
+if PPC
+dtksh_LDADD += -lm
+endif
+endif
+
 if SOLARIS
 dtksh_LDADD += -lsecdb -lsocket -lnsl
 endif
