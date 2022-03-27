@@ -55,7 +55,7 @@ bool_t xdr_time_t(XDR *xdrs, time_t *objp);
 #define _xdr_long_long_t xdr_int64_t
 #else
 #define _xdr_long_long_t xdr_hyper
-#end
+#endif
 #ifndef _xdr_time_t
 # if SIZEOF_INT == SIZEOF_TIME_T
 # define _xdr_time_t xdr_int
