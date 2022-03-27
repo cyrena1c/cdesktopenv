@@ -7,9 +7,40 @@ the Open Group.
 You may reuse and redistribute this code under the terms of this
 license. See the COPYING file for details.
 
+# About this fork
+This fork of the Common Desktop Environment contains hacks to make it
+build in OpenBSD 7.0 macppc.  This build was tested on a Powerbook5,4.
+
+* a bunch of stuff needs an extra `-lm` in the linker step
+* `dtmail` not working on OpenBSD due to the permissions in `/var/mail`
+  being set up differently.
+    * The temporary fix was to use `lockspool(1)` to lock the spool.
+      This allows `dtmail` to lock and read the mailbox, but
+      unfortunately writing and moving mail is still broken.
+    * A better way is to rewrite `dtmail` backend to make use of the
+      POSIX `mailx(1)` but I'm too lazy to do that.
+* Undefined reference to `xdr_hyper` in `lib/csa/cmxdr.c`, replaced
+  with `xdr_int64_t`.
+* `ksh93` needs a little bit more convincing to include `-lm` in the
+  linker stage, so `-lm` gets baked into `programs/dtksh/Makefile.am`.
+
+Still broken:
+* Create Action not working
+* `dtmail` marking message as read, sending, and moving
+* `dtinfo` crashes upon starting
+
 # Downloading
 
-Downloading this release:
+## This fork
+
+Downloading this fork:
+```
+git clone https://github.com/cyrena1c/cdesktopenv
+```
+
+## Mainline CDE
+
+Downloading the mainline release:
 
 CDE may be downloaded in source form from the Common Desktop
 Environment website:
