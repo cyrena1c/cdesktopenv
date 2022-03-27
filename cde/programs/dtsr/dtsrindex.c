@@ -1384,14 +1384,27 @@ main (int argc, char **argv)
     /* HACK: just so that a segfault won't stop the
     entire build. */
 
+    /* Debug invocation */
+    int  debug_i;
+    char debug_cwd[PATH_MAX + 1];
+    if (!getcwd(debug_cwd, PATH_MAX)) {
+      return -1;
+    }
+    printf("working directory: %s\n", debug_cwd);
+    for (debug_i = 0; debug_i < argc; ++debug_i) {
+      printf("argv[%d] = '%s'\n", debug_i, argv[debug_i]);
+    } /* also comment out the fucky wucky stuff */
+
+    /*
     int         oopsie_woopsie;
     pid_t       fucky_wucky_uwu = fork();
     if (fucky_wucky_uwu == -1) {
         return -1;
     } else if (fucky_wucky_uwu != 0) {
         waitpid(fucky_wucky_uwu, &oopsie_woopsie, 0);
-        return 0;  /* pretend nothing happened */
+        return 0;
     }
+    */
 
     /******************* INITIALIZE ******************/
     setlocale (LC_ALL, "");
@@ -1771,11 +1784,13 @@ INVALID_FZK_FORMAT:
     else
 	strcpy (buf, CATGETS(dtsearch_catd, MS_cborodin, 41,
 	    "No duplicate records found"));
+    /*
     printf (CATGETS(dtsearch_catd, MS_cborodin, 1225,
 	"%s: Pass 1 completed in %lum %lus, read %lu records.\n"
 	"  %s, parsed %lu words.\n"),
 	aa_argv0, elapsed / 60L, elapsed % 60L, record_count,
 	buf, num_of_diff_words);
+    */
     if (record_count > batch_size) {
 	printf (CATGETS(dtsearch_catd, MS_cborodin, 33,
 	    "\n%s Number of incoming records exceeded %d.\n"
