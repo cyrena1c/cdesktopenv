@@ -385,7 +385,7 @@ void set_ca_dialog_height (void)
     if (!sessiondata.useSession)
     {
       /* give window new height */
-      XtVaSetValues (CreateActionAppShell, XmNheight, newheight, NULL);
+      // XtVaSetValues (CreateActionAppShell, XmNheight, newheight, NULL);
     }
 
     XtVaSetValues (CA_Expand, XmNbottomAttachment, XmATTACH_FORM, NULL);
